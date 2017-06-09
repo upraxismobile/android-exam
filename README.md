@@ -21,7 +21,7 @@ To assess a developer's skills in terms of developing Android apps and decision-
         - Address
         - Contact person
         - Contact person's phone number
-- Make a pull request to this repository
+- Send an email once done to julious.igmen@upraxis.com
 
 Any libraries or tools of the developer's choosing may be used.
 
