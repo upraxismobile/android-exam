@@ -58,6 +58,16 @@ android {
             buildConfigField 'String', 'HOST_NAME', host_name
         }
     }
+
+    variantFilter { variant ->
+        def names = variant.flavors*.name
+
+        if (names.contains("Mock") && variant.buildType.name == "release") {
+            variant.ignore = true
+        } else if (names.contains("Prod") && variant.buildType.name == "debug") {
+            variant.ignore = true
+        }
+    }
 }
 
 dependencies {
