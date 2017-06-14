@@ -35,6 +35,29 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+
+    productFlavors.all {
+        ext.host_name = null
+    }
+
+    productFlavors {
+
+        Mock {
+            host_name = '\"http://localhost:9000\"'
+            applicationIdSuffix ".mock"
+            versionNameSuffix "-prod"
+
+            buildConfigField 'String', 'HOST_NAME', host_name
+        }
+
+        Prod {
+            host_name = '\"http://localhost:9000\"'
+            applicationIdSuffix ".prod"
+            versionNameSuffix "-prod"
+
+            buildConfigField 'String', 'HOST_NAME', host_name
+        }
+    }
 }
 
 dependencies {
