@@ -155,8 +155,14 @@ dependencies {
     androidTestCompile("com.android.support.test.espresso:espresso-core:$rootProject.ext.espressoVersion", {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
+
+    //crashlytics for crash monitoring
     compile("com.crashlytics.sdk.android:crashlytics:$rootProject.ext.crashlyticsVersion") {
         transitive = true;
     }
+
+    compile "android.arch.persistence.room:runtime:$rootProject.ext.roomPersistenceVersion"
+    annotationProcessor "android.arch.persistence.room:compiler:$rootProject.ext.roomPersistenceVersion"
+    compile "android.arch.persistence.room:rxjava2:$rootProject.ext.roomPersistenceVersion"
 
 }
