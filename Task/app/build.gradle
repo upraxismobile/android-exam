@@ -1,16 +1,19 @@
 apply plugin: 'com.android.application'
+apply plugin: 'android-apt'
+apply plugin: 'me.tatarka.retrolambda'
 
 android {
-    compileSdkVersion 25
-    buildToolsVersion "25.0.3"
+    compileSdkVersion rootProject.ext.compileSdkVersion
+    buildToolsVersion rootProject.ext.buildToolsVersion
+
     defaultConfig {
-        applicationId "upraxis.com.task"
-        minSdkVersion 15
-        targetSdkVersion 25
+        minSdkVersion rootProject.ext.minSdkVersion
+        targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1
-        versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
+
+
     buildTypes {
         release {
             minifyEnabled false
@@ -24,7 +27,53 @@ dependencies {
     androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
-    compile 'com.android.support:appcompat-v7:25.3.1'
-    compile 'com.android.support.constraint:constraint-layout:1.0.2'
-    testCompile 'junit:junit:4.12'
+
+    compile "com.android.support:appcompat-v7:$rootProject.ext.supportLibraryVersion"
+
+    compile "com.android.support.constraint:constraint-layout:$rootProject.ext.constraintLayoutVersion"
+
+    testCompile "junit:junit:$rootProject.ext.junitVersion"
+
+    //scalable size unit
+    compile "com.intuit.sdp:sdp-android:$rootProject.ext.sdpVersion"
+
+    //type-safe http client
+    compile "com.squareup.retrofit2:retrofit:$rootProject.ext.retrofitVersion"
+    compile "com.squareup.retrofit2:converter-gson:$rootProject.ext.retrofitVersion"
+    compile "com.squareup.retrofit2:adapter-rxjava:$rootProject.ext.retrofitVersion"
+
+    //rxjava & rxandroid
+    compile "io.reactivex:rxjava:$rootProject.ext.rxJavaVersion"
+    compile "io.reactivex:rxandroid:$rootProject.ext.rxAndroidVersion"
+
+    //butter knife (view injection)
+    compile "com.jakewharton:butterknife:$rootProject.ext.butterKnifeVersion"
+    apt("com.jakewharton:butterknife-compiler:$rootProject.ext.butterKnifeVersion") {
+        exclude group: 'com.android.support', module: 'support-annotations'
+    }
+
+    //robolectric
+    testCompile "org.robolectric:robolectric:$rootProject.ext.robolectricVersion"
+
+    //dagger (Dependency Injection)
+    apt "com.google.dagger:dagger-compiler:$rootProject.ext.daggerVersion"
+    compile "com.google.dagger:dagger:$rootProject.ext.daggerVersion"
+    provided "javax.annotation:jsr250-api:$rootProject.ext.javaxAnnotation"
+
+    //OkHttp logging interceptor (remove this on production version
+    compile "com.squareup.okhttp3:logging-interceptor:$rootProject.ext.loggingInterceptorVesion"
+
+    //espresso contrib (Used for ui test)
+    androidTestCompile "com.android.support.test.espresso:espresso-contrib:$rootProject.ext.espressoVersion", {
+        exclude group: 'com.android.support', module: 'support-annotations'
+        exclude group: 'com.android.support', module: 'support-v4'
+        exclude group: 'com.android.support', module: 'design'
+        exclude group: 'com.android.support', module: 'recyclerview-v7'
+    }
+
+    //espresso core (Used for ui test)
+    androidTestCompile("com.android.support.test.espresso:espresso-core:$rootProject.ext.espressoVersion", {
+        exclude group: 'com.android.support', module: 'support-annotations'
+    })
+
 }
