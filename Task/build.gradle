@@ -63,4 +63,7 @@ ext {
     loggingInterceptorVesion = '3.3.1'
 
     constraintLayoutVersion = '1.0.2'
+
+    //crashlytics
+    crashlyticsVersion = '2.6.8@aar'
 }
