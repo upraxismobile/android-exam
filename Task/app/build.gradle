@@ -14,9 +14,6 @@ repositories {
     maven { url 'https://maven.fabric.io/public' }
 }
 
-apply plugin: 'android-apt'
-apply plugin: 'me.tatarka.retrolambda'
-
 android {
     compileSdkVersion rootProject.ext.compileSdkVersion
     buildToolsVersion rootProject.ext.buildToolsVersion
@@ -50,9 +47,12 @@ android {
         ext.host_name = null
     }
 
+    flavorDimensions "task"
+
     productFlavors {
 
         Mock {
+            dimension "task"
             host_name = '\"http://localhost:9000\"'
             applicationIdSuffix ".mock"
             versionNameSuffix "-prod"
@@ -99,6 +99,7 @@ android {
         exclude 'META-INF/notice.txt'
         exclude 'META-INF/services/javax.annotation.processing.Processor'
         exclude 'META-INF/MANIFEST.MF'
+        exclude 'META-INF/rxjava.properties'
     }
 }
 
@@ -123,12 +124,12 @@ dependencies {
     compile "com.squareup.retrofit2:adapter-rxjava:$rootProject.ext.retrofitVersion"
 
     //rxjava & rxandroid
-    compile "io.reactivex:rxjava:$rootProject.ext.rxJavaVersion"
-    compile "io.reactivex:rxandroid:$rootProject.ext.rxAndroidVersion"
+    compile "io.reactivex.rxjava2:rxjava:$rootProject.ext.rxJavaVersion"
+    compile "io.reactivex.rxjava2:rxandroid:$rootProject.ext.rxAndroidVersion"
 
     //butter knife (view injection)
     compile "com.jakewharton:butterknife:$rootProject.ext.butterKnifeVersion"
-    apt("com.jakewharton:butterknife-compiler:$rootProject.ext.butterKnifeVersion") {
+    annotationProcessor("com.jakewharton:butterknife-compiler:$rootProject.ext.butterKnifeVersion") {
         exclude group: 'com.android.support', module: 'support-annotations'
     }
 
@@ -136,7 +137,7 @@ dependencies {
     testCompile "org.robolectric:robolectric:$rootProject.ext.robolectricVersion"
 
     //dagger (Dependency Injection)
-    apt "com.google.dagger:dagger-compiler:$rootProject.ext.daggerVersion"
+    annotationProcessor "com.google.dagger:dagger-compiler:$rootProject.ext.daggerVersion"
     compile "com.google.dagger:dagger:$rootProject.ext.daggerVersion"
     provided "javax.annotation:jsr250-api:$rootProject.ext.javaxAnnotation"
 
@@ -164,5 +165,11 @@ dependencies {
     compile "android.arch.persistence.room:runtime:$rootProject.ext.roomPersistenceVersion"
     annotationProcessor "android.arch.persistence.room:compiler:$rootProject.ext.roomPersistenceVersion"
     compile "android.arch.persistence.room:rxjava2:$rootProject.ext.roomPersistenceVersion"
+
+    compile "android.arch.lifecycle:extensions:$rootProject.ext.roomPersistenceVersion"
+    compile "android.arch.persistence.room:runtime:$rootProject.ext.roomPersistenceVersion"
+    compile "android.arch.persistence.room:rxjava2:$rootProject.ext.roomPersistenceVersion"
+    annotationProcessor "android.arch.lifecycle:compiler:$rootProject.ext.roomPersistenceVersion"
+    annotationProcessor "android.arch.persistence.room:compiler:$rootProject.ext.roomPersistenceVersion"
 
 }
