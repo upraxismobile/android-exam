@@ -11,18 +11,10 @@ import com.google.gson.annotations.SerializedName;
 
 public class ContactPerson implements Parcelable {
 
-    private String name;
+    public String name;
 
     @SerializedName("mobile_number")
-    private String mobileNumber;
-
-    public String getName() {
-        return name;
-    }
-
-    public String getMobileNumber() {
-        return mobileNumber;
-    }
+    public String mobileNumber;
 
     @Override
     public int describeContents() {
