@@ -14,5 +14,5 @@ public class ErrorMessages {
     public static final String ERROR_SLOW_CONNECTION = "Unable to complete request due to poor connectivity.";
     public static final String ERROR_UNAUTHORIZED = "You are not allowed to access this resource.";
     public static final String ERROR_UNABLE_TO_CONNECT_WITH_SERVER = "Unable to establish communication with server. Please try again.";
-    public static final String ERROR_UNABLE_TO_COMMUNICATE_WITH_SERVER = "You are not allowed to access h";
+    public static final String ERROR_UNABLE_TO_COMMUNICATE_WITH_SERVER = "You are not allowed to access this resource.";
 }
