@@ -21,8 +21,6 @@ public interface BaseView {
 
     void onServerRelatedError();
 
-    void onGenericError();
-
     void onNoConnectionError();
 
     void onSubscribed(final Disposable disposable);
