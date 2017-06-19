@@ -2,22 +2,25 @@ package upraxis.com.task.person.view;
 
 import android.app.ProgressDialog;
 import android.os.Bundle;
+import android.support.v7.widget.RecyclerView;
 
 import java.util.ArrayList;
 
 import javax.inject.Inject;
 
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
 import io.reactivex.disposables.Disposable;
 import upraxis.com.task.R;
+import upraxis.com.task.adapter.PersonAdapter;
 import upraxis.com.task.base.BaseActivity;
 import upraxis.com.task.base.BaseApplication;
 import upraxis.com.task.commons.ErrorMessages;
+import upraxis.com.task.person.component.DaggerPersonComponent;
 import upraxis.com.task.person.contract.PersonContract;
 import upraxis.com.task.person.model.Person;
 import upraxis.com.task.person.module.PersonModule;
-import upraxis.com.task.person.mvp.DaggerPersonComponent;
 import upraxis.com.task.person.presenter.PersonPresenterImpl;
 import upraxis.com.task.room.AppDatabase;
 
@@ -28,6 +31,9 @@ public class PersonActivity extends BaseActivity implements PersonContract.View 
 
     @Inject
     PersonPresenterImpl presenter;
+
+    @BindView(R.id.rv_people)
+    RecyclerView rv_people;
 
     private Unbinder unbinder;
     private Disposable disposable = null;
@@ -50,6 +56,10 @@ public class PersonActivity extends BaseActivity implements PersonContract.View 
                 .personModule(new PersonModule(this))
                 .build()
                 .inject(this);
+
+        /** initialize people listing */
+        final PersonAdapter adapter = new PersonAdapter(people);
+        rv_people.setAdapter(adapter);
 
         /** fetch persons from remote source */
         presenter.onFetchPersons();
@@ -75,7 +85,7 @@ public class PersonActivity extends BaseActivity implements PersonContract.View 
         this.people.clear();
         this.people.addAll(people);
 
-        //TODO do refreshing of recyclerview here
+        rv_people.getAdapter().notifyDataSetChanged();
     }
 
     @Override
