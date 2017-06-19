@@ -1,16 +1,12 @@
 package upraxis.com.task.person.dao;
 
 import android.arch.persistence.room.Dao;
-import android.arch.persistence.room.Delete;
 import android.arch.persistence.room.Insert;
 import android.arch.persistence.room.Query;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import io.reactivex.Flowable;
-import io.reactivex.Observable;
-import io.reactivex.Single;
 import upraxis.com.task.person.model.Person;
 
 /**
@@ -23,7 +19,7 @@ public interface PersonDao {
      * get all record
      * */
     @Query("SELECT * FROM Person")
-    Observable<List<Person>> getAll();
+    List<Person> getAll();
 
     /**
      * create new record
@@ -35,14 +31,13 @@ public interface PersonDao {
      * create multiple {@link Person} record
      * */
     @Insert
-    void insertAll(List<Person> Person);
-
+    long[] insertAll(List<Person> Person);
 
     /**
-     * delete record {@link Person}
+     * delete all record {@link Person}
      * */
-    @Delete
-    void delete(Person Person);
+    @Query("DELETE from Person")
+    int deleteAll();
 
     /**
      * return total count of person record
