@@ -9,21 +9,17 @@ import javax.inject.Inject;
 
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
-import io.reactivex.Single;
-import io.reactivex.SingleObserver;
-import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
-import io.reactivex.schedulers.Schedulers;
 import upraxis.com.task.R;
 import upraxis.com.task.base.BaseActivity;
 import upraxis.com.task.base.BaseApplication;
-import upraxis.com.task.person.model.Person;
-import upraxis.com.task.person.mvp.DaggerPersonComponent;
+import upraxis.com.task.commons.ErrorMessages;
 import upraxis.com.task.person.contract.PersonContract;
+import upraxis.com.task.person.model.Person;
 import upraxis.com.task.person.module.PersonModule;
+import upraxis.com.task.person.mvp.DaggerPersonComponent;
 import upraxis.com.task.person.presenter.PersonPresenterImpl;
 import upraxis.com.task.room.AppDatabase;
-import upraxis.com.task.utils.LogHelper;
 
 public class PersonActivity extends BaseActivity implements PersonContract.View {
 
@@ -36,6 +32,7 @@ public class PersonActivity extends BaseActivity implements PersonContract.View 
     private Unbinder unbinder;
     private Disposable disposable = null;
     private ProgressDialog progressDialog;
+    private ArrayList<Person> people = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,7 +66,94 @@ public class PersonActivity extends BaseActivity implements PersonContract.View 
     @Override
     public void onShowDialog(String action, String header, String message,
                              String positiveText, String negativeText, boolean isCancelable) {
-        /** check current instance of progress dialog if not null */
+        showConfirmDialog(action, header, message, positiveText, negativeText, isCancelable,
+                null);
+    }
+
+    @Override
+    public void onLoadPersons(ArrayList<Person> people) {
+        this.people.clear();
+        this.people.addAll(people);
+
+        //TODO do refreshing of recyclerview here
+    }
+
+    @Override
+    public void onCachedPersonCount(Integer count) {
+        /** load cached person record */
+        if (count > 0) {
+            presenter.onLoadCachedPersons();
+        } else {
+            showConfirmDialog(null, ErrorMessages.ERROR_NO_CONNECTION_HEADER,
+                    ErrorMessages.ERROR_NO_CONNECTION_MESSAGE, "Close", null,
+                    true, null);
+        }
+    }
+
+    @Override
+    public void onShowLoading(String header, String message) {
+        dismissProgressDialog();
+
+        progressDialog = new ProgressDialog(this);
+
+        /** display header/title */
+        if (header != null) {
+            progressDialog.setTitle(header);
+        }
+
+        /** display message */
+        if (message != null) {
+            progressDialog.setMessage(message);
+        }
+
+        /** display progress bar */
+        progressDialog.setCancelable(false);
+        progressDialog.show();
+    }
+
+    @Override
+    public void onUnauthorized() {
+        showConfirmDialog(null, ErrorMessages.ERROR_UNAUTHORIZED,
+                ErrorMessages.ERROR_UNABLE_TO_CONNECT_WITH_SERVER, "Close",
+                null, true, null);
+    }
+
+    @Override
+    public void onDismissLoading() {
+        dismissProgressDialog();
+    }
+
+    @Override
+    public void onFailedToConnect() {
+        showConfirmDialog(null, ErrorMessages.ERROR_NO_CONNECTION_HEADER,
+                ErrorMessages.ERROR_UNABLE_TO_CONNECT_WITH_SERVER, "Close",
+                null, true, null);
+    }
+
+    @Override
+    public void onSocketTimeout() {
+        showConfirmDialog(null, ErrorMessages.ERROR_NO_CONNECTION_HEADER,
+                ErrorMessages.ERROR_SLOW_CONNECTION, "Close", null,
+                true, null);
+    }
+
+    @Override
+    public void onServerRelatedError() {
+        showConfirmDialog(null, ErrorMessages.ERROR_NO_CONNECTION_HEADER,
+                ErrorMessages.ERROR_UNABLE_TO_COMMUNICATE_WITH_SERVER, "Close",
+                null, true, null);
+    }
+
+    @Override
+    public void onNoConnectionError() {
+        /**
+         * client has no network connection, try to check if there's cached person data and load it
+         * if there's any.
+         * */
+        presenter.onCheckCachedPersonsCount();
+    }
+
+    private void dismissProgressDialog() {
         if (progressDialog != null) {
             /** dismiss current instance of progress bar if it's currently shown */
             if (progressDialog.isShowing()) {
@@ -77,62 +161,17 @@ public class PersonActivity extends BaseActivity implements PersonContract.View 
             }
             progressDialog = null;
         }
-
-    }
-
-    @Override
-    public void onLoadPersons(ArrayList<Person> persons) {
-
-    }
-
-    @Override
-    public void onCachedPersonCount(Integer integer) {
-
-    }
-
-    @Override
-    public void onShowLoading(String header, String message) {
-
-    }
-
-    @Override
-    public void onUnauthorized() {
-
-    }
-
-    @Override
-    public void onDismissLoading() {
-
-    }
-
-    @Override
-    public void onFailedToConnect() {
-
-    }
-
-    @Override
-    public void onSocketTimeout() {
-
-    }
-
-    @Override
-    public void onServerRelatedError() {
-
-    }
-
-    @Override
-    public void onGenericError() {
-
-    }
-
-    @Override
-    public void onNoConnectionError() {
-
     }
 
     @Override
     protected void onDestroy() {
+        /**
+         * stop receiving of result of subscription from Observable or Single
+         * upon destroying of activity
+         * */
         presenter.onDispose(disposable);
+
+
         if (unbinder != null) {
             unbinder.unbind();
         }
