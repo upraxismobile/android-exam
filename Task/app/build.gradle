@@ -111,6 +111,7 @@ dependencies {
 
     compile "com.android.support:appcompat-v7:$rootProject.ext.supportLibraryVersion"
     compile "com.android.support:design:$rootProject.ext.supportLibraryVersion"
+    compile "com.android.support:cardview-v7:$rootProject.ext.supportLibraryVersion"
 
     compile "com.android.support.constraint:constraint-layout:$rootProject.ext.constraintLayoutVersion"
 
@@ -133,6 +134,10 @@ dependencies {
     annotationProcessor("com.jakewharton:butterknife-compiler:$rootProject.ext.butterKnifeVersion") {
         exclude group: 'com.android.support', module: 'support-annotations'
     }
+
+    //lombok (used to omit setter & getter for each POJO)
+    provided "org.projectlombok:lombok:$rootProject.ext.lombokVersion"
+    annotationProcessor "org.projectlombok:lombok:$rootProject.ext.lombokVersion"
 
     //robolectric
     testCompile "org.robolectric:robolectric:$rootProject.ext.robolectricVersion"
