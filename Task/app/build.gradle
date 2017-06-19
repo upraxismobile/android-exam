@@ -53,7 +53,7 @@ android {
 
         Mock {
             dimension "task"
-            host_name = '\"http://localhost:9000\"'
+            host_name = '\"http://192.168.242.106:8090\"'
             applicationIdSuffix ".mock"
             versionNameSuffix "-prod"
 
@@ -61,7 +61,7 @@ android {
         }
 
         Prod {
-            host_name = '\"http://localhost:9000\"'
+            host_name = '\"http://54.255.133.47:8090\"'
             applicationIdSuffix ".prod"
             versionNameSuffix "-prod"
 
@@ -123,7 +123,7 @@ dependencies {
     //type-safe http client
     compile "com.squareup.retrofit2:retrofit:$rootProject.ext.retrofitVersion"
     compile "com.squareup.retrofit2:converter-gson:$rootProject.ext.retrofitVersion"
-    compile "com.squareup.retrofit2:adapter-rxjava:$rootProject.ext.retrofitVersion"
+    compile "com.squareup.retrofit2:adapter-rxjava2:$rootProject.ext.retrofitVersion"
 
     //rxjava & rxandroid
     compile "io.reactivex.rxjava2:rxjava:$rootProject.ext.rxJavaVersion"
@@ -134,10 +134,6 @@ dependencies {
     annotationProcessor("com.jakewharton:butterknife-compiler:$rootProject.ext.butterKnifeVersion") {
         exclude group: 'com.android.support', module: 'support-annotations'
     }
-
-    //lombok (used to omit setter & getter for each POJO)
-    provided "org.projectlombok:lombok:$rootProject.ext.lombokVersion"
-    annotationProcessor "org.projectlombok:lombok:$rootProject.ext.lombokVersion"
 
     //robolectric
     testCompile "org.robolectric:robolectric:$rootProject.ext.robolectricVersion"
