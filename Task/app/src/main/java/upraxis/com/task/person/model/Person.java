@@ -5,9 +5,12 @@ import android.arch.persistence.room.PrimaryKey;
 
 import com.google.gson.annotations.SerializedName;
 
+import lombok.Data;
+
 /**
  * Created by rsbulanon on 6/14/17.
  */
+@Data
 @Entity(tableName = "person")
 public class Person {
 
