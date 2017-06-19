@@ -5,6 +5,7 @@ import java.util.ArrayList;
 
 import javax.inject.Inject;
 
+import io.reactivex.Completable;
 import io.reactivex.Observable;
 import io.reactivex.Observer;
 import io.reactivex.Single;
@@ -19,7 +20,9 @@ import upraxis.com.task.commons.AppAction;
 import upraxis.com.task.listener.OnApiRequestListener;
 import upraxis.com.task.person.contract.PersonContract;
 import upraxis.com.task.person.model.Person;
+import upraxis.com.task.person.service.PersonService;
 import upraxis.com.task.room.AppDatabase;
+import upraxis.com.task.utils.LogHelper;
 
 /**
  * Created by rsbulanon on 6/18/17.
@@ -31,17 +34,45 @@ public class PersonPresenterImpl extends BasePresenterImpl implements PersonCont
     @Inject
     AppDatabase appDatabase;
 
+    private PersonService personService;
     private PersonContract.View view;
 
     @Inject
     public PersonPresenterImpl(PersonContract.View view, Retrofit retrofit) {
         this.view = view;
+        this.personService = retrofit.create(PersonService.class);
     }
 
     @Override
     public void onFetchPersons() {
         if (isNetworkAvailable()) {
+            onApiRequestStart(AppAction.ON_FETCH_PERSONS);
+            personService.getPeople().subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(new Observer<ArrayList<Person>>() {
+                        @Override
+                        public void onSubscribe(Disposable d) {
+                            LogHelper.log("person", "on subscribed");
+                            view.onSubscribed(d);
+                        }
 
+                        @Override
+                        public void onNext(ArrayList<Person> people) {
+                            LogHelper.log("person", "on next");
+                            onApiRequestSuccess(AppAction.ON_FETCH_PERSONS, people);
+                        }
+
+                        @Override
+                        public void onError(Throwable e) {
+                            LogHelper.log("person", "on error");
+                            onApiRequestFailed(AppAction.ON_FETCH_PERSONS, e);
+                        }
+
+                        @Override
+                        public void onComplete() {
+                            LogHelper.log("person", "on complete");
+                        }
+                    });
         } else {
             view.onNoConnectionError();
         }
@@ -52,7 +83,7 @@ public class PersonPresenterImpl extends BasePresenterImpl implements PersonCont
         /**
          * load cached person records from local db
          * */
-        Observable.just(appDatabase.personModel().getAll())
+        Observable.fromCallable(() -> appDatabase.personModel().getAll())
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Observer() {
@@ -62,8 +93,8 @@ public class PersonPresenterImpl extends BasePresenterImpl implements PersonCont
                     }
 
                     @Override
-                    public void onNext(Object o) {
-                        view.onLoadPersons((ArrayList<Person>) o);
+                    public void onNext(Object result) {
+                        view.onLoadPersons((ArrayList<Person>) result);
                     }
 
                     @Override
@@ -176,10 +207,27 @@ public class PersonPresenterImpl extends BasePresenterImpl implements PersonCont
         if (action.equals(AppAction.ON_FETCH_PERSONS)) {
             /** save fetched person records to local db */
             final ArrayList<Person> persons = (ArrayList<Person>) result;
-            appDatabase.personModel().insertAll(persons);
+            Single.fromCallable(() -> appDatabase.personModel().deleteAll())
+                .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(new SingleObserver<Integer>() {
+                        @Override
+                        public void onSubscribe(Disposable d) {
 
-            /** display fetched data */
-            view.onLoadPersons(persons);
+                        }
+
+                        @Override
+                        public void onSuccess(Integer integer) {
+                            Completable.fromCallable(() -> appDatabase.personModel().insertAll(persons))
+                                    .subscribeOn(Schedulers.io()).subscribe();
+                            view.onLoadPersons(persons);
+                        }
+
+                        @Override
+                        public void onError(Throwable e) {
+
+                        }
+                    });
         }
     }
 }
