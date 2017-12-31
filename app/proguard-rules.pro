@@ -24,3 +24,5 @@
 -dontwarn retrofit2.**
 -dontwarn com.squareup.**
 -dontwarn okio.**
+-dontwarn org.joda.**
+
