@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:paddingBottom="16dp">
+
+    <android.support.v4.widget.SwipeRefreshLayout
+        android:id="@+id/search_list_fragment_swiperefresh"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <ListView
+            android:id="@+id/search_list_fragment_listview"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            tools:listitem="@layout/person_list_item"/>
+    </android.support.v4.widget.SwipeRefreshLayout>
+
+</LinearLayout>
