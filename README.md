@@ -21,7 +21,7 @@ To assess a developer's skills in terms of developing Android apps and decision-
         - Address
         - Contact person
         - Contact person's phone number
-- Send an email once done to julious.igmen@upraxis.com
+- Send an email once done to james.licong@upraxis.com, lowiegie.oblenida@upraxis.com, and developer@upraxis.com
 
 Any libraries or tools of the developer's choosing may be used.
 
